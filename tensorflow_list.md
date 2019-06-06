@@ -15,3 +15,9 @@
 - 安装TensorFlow:pip3 --default-timeout=100 install --upgrade tensorflow
 error:pip._vendor.urllib3.exceptions.ReadTimeoutError: 
 HTTPSConnectionPool(host='files.pythonhosted.org', port=443): Read timed out.
+
+
+moudle : tensorflow-master
+- 
+- 计算图: clac_chart  <TensorFlow计算步骤>
+- TensorFlow线性回归: core/reg_mode/tensorflow_reg 
