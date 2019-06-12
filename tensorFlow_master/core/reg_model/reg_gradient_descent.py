@@ -55,6 +55,7 @@ with tf.Session() as sess:
         if epoch % 100 == 0:
             print('Epoch', epoch, 'MSE = ', mse.eval())
         sess.run(training_op)
+        # training_op.eval()
     best_theta = theta.eval()
 print('best_theta:  ', best_theta)
 
@@ -96,27 +97,6 @@ with tf.Session() as sess:
     B_val_2 = B.eval(feed_dict={A: [[4, 5, 6], [7, 8, 9]]})
 print(B_val_1)
 print(B_val_2)
-'''
-实际上,可以输入任何操作的输出,不仅仅是占位符
-下面来看下小批次梯度下降的code:
-'''
-X = tf.placeholder(tf.float32, shape=(None, n + 1), name='X')
-y = tf.placeholder(tf.float32, shape=(None, 1), name='y')
-
-'''
- 定义批次的大小并计算批次的总数
-np.ceil:向上取整
-'''
-n_epochs = 10
-batch_size = 100
-n_batches = np.int(np.ceil(m / batch_size))
-
-'''
-最后在执行阶段,逐个获取小批次,然后在评估依赖于他们的节点时候,通过feed_dict参数提供X,y的值
-'''
-X_train = tf.constant(scaled_housing_data_plus_bias, dtype=tf.float32, name='X')
-y_train = tf.constant(housing.target.reshape(-1, 1), dtype=tf.float32, name='y')
-
 
 def fetch_batch(epoch, batch_index, batch_size):
     '''
@@ -127,10 +107,31 @@ def fetch_batch(epoch, batch_index, batch_size):
     seed 决定生成随机数是否一致
     '''
     np.random.seed(epoch * n_batches + batch_index)
+    '''
+    从实例中随机生成100组实例
+    '''
     indices = np.random.randint(m, size=batch_size)
     X_batch = scaled_housing_data_plus_bias[indices]
     y_batch = housing.target.reshape(-1, 1)[indices]
     return X_batch, y_batch
+'''
+实际上,可以输入任何操作的输出,不仅仅是占位符
+下面来看下小批次梯度下降的code:
+'''
+'''
+ 定义批次的大小并计算批次的总数
+np.ceil:向上取整
+'''
+'''
+最后在执行阶段,逐个获取小批次,然后在评估依赖于他们的节点时候,通过feed_dict参数提供X,y的值
+'''
+X = tf.placeholder(tf.float32, shape=(None, n + 1), name='X')
+y = tf.placeholder(tf.float32, shape=(None, 1), name='y')
+n_epochs = 10
+batch_size = 100
+n_batches = np.int(np.ceil(m / batch_size))
+X_train = tf.constant(scaled_housing_data_plus_bias, dtype=tf.float32, name='X')
+y_train = tf.constant(housing.target.reshape(-1, 1), dtype=tf.float32, name='y')
 
 
 # 获取初始的theta
@@ -142,8 +143,6 @@ optimizer = tf.train.GradientDescentOptimizer(
     learning_rate=learning_rate)  # 替代 gradients = 2 / m * tf.matmul(tf.transpose(X), error)
 training_op = optimizer.minimize(mse)  # 替代 training_op = tf.assign(theta, theta - learning_rate * gradients)
 init = tf.global_variables_initializer()
-checkpoint_dir = '/Users/houruixiang/python/TensorFlow/command/assets/'
-saver = tf.train.Saver()
 with tf.Session() as sess:
     sess.run(init)
     for epoch in range(n_epochs):

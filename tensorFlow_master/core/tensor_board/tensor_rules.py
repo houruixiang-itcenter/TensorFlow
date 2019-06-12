@@ -2,12 +2,13 @@
 # -*- coding: utf-8 -*-
 # @Time    : 2019/6/11 下午9:00
 # @Author  : Aries
-# @Site    : 
+# @Site    :
 # @File    : tensor_rules.py
 # @Software: PyCharm
 '''
 模块化
 '''
+
 import tensorflow as tf
 
 '''
@@ -35,19 +36,37 @@ relu2 = tf.maximum(z2, 0.0, name='relu2')
 output = tf.add(relu1, relu2, name='output')
 
 '''
-优化之后
+上述代码很容易出错,而且比较难以维护
+当添加多个ReLU时,情况会边的比较糟糕
+
+Tensorflow的解决办法:
+用一个函数来构建ReLu,下面代码构建了5个ReLU,并且出书了他们的和
+
+再Tensorflow中构建节点的时候,会检查当前节点是否已经存在,如果存在,他会为其添加一个下划线和索引来保证其唯一性
+
+第一个ReLU中包含了'weights''bias''z'和'relu'  则下一个ReLU就是'weights_1''bias_1''z_1'和'relu_1'
 '''
 
 
 def relu(X):
-    w_shape = (int(X.get_shape()[1]), 1)
-    w = tf.Variable(tf.random_normal((w_shape)), name='weights1')
-    b = tf.Variable(0.0, name='bias')
-    z = tf.add(tf.matmul(X, w), b, name='z')
-    return tf.add(z, 0.0, name='relu')
+	'''
+	使用命名作用域可以使计算图更加明了
+	'''
+	with tf.name_scope('relu'):
+		w_shape = (int(X.get_shape()[1]), 1)
+		w = tf.Variable(tf.random_normal((w_shape)), name='weights')
+		b = tf.Variable(0.0, name='bias')
+		z = tf.add(tf.matmul(X, w), b, name='z')
+		return tf.maximum(z, 0.0, name='relu')
 
 
 n_features = 3
 X = tf.placeholder(tf.float32, shape=(None, n_features), name='X')
 relus = [relu(X) for i in range(5)]
 output = tf.add_n(relus, name='output')
+print(output)
+
+with tf.Session() as sess:
+	sess.run(tf.global_variables_initializer())
+	result = output.eval(feed_dict={X: [[1, 2, 3]]})
+	print(result)
