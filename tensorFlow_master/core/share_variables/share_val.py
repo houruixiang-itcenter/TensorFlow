@@ -128,3 +128,5 @@ with tf.Session() as sess:
 	for i in range(len(relus)):
 		result = relus[i].eval(feed_dict={X: [[1, 2, 3]]})
 		print(result)
+
+
