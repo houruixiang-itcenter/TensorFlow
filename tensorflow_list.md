@@ -16,7 +16,19 @@ error:pip._vendor.urllib3.exceptions.ReadTimeoutError:
 HTTPSConnectionPool(host='files.pythonhosted.org', port=443): Read timed out.
 
 
-moudle : tensorflow-master
+moudle : tensorflow-master  
 - 
+> tensorflow初识
+
 - 计算图: clac_chart  <TensorFlow计算步骤>
 - TensorFlow线性回归: core/reg_mode/tensorflow_reg 
+- TensorFlow梯度下降: core/reg_mode/reg_gradient_descent
+- TensorFlow保存状态节点: core/reg_mode/Saver
+- TensorFlow计算图和节点模型线上: core/tebsor_board/tebsor_board
+- TensorFlow命名空间 & 模块化: core/tebsor_board/tebsor_rules
+- TensorFlow模块之间共享变量: core/share_variables/share_val
+    
+moudle : artificial_neural_network 
+-
+> 人工神经网络
+
