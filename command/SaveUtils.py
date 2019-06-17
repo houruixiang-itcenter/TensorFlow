@@ -9,13 +9,11 @@ save_path = '/Users/houruixiang/python/TensorFlow/command/save_assets/'
 import tensorflow as tf
 
 
-def joint_params(mode):
-    if mode == 0:
-        return save_path + 'theta.ckpt'
-    if mode == 1:
-        return save_path + 'test.ckpt'
-
-    pass
+def joint_params(path='theta.ckpt'):
+	
+	return save_path + path
+	
+	pass
 
 
 def save(sess,
@@ -25,20 +23,20 @@ def save(sess,
          meta_graph_suffix="meta",
          write_meta_graph=True,
          write_state=True,
-         strip_default_attrs=False, mode=0):
-    saver = tf.train.Saver()
-    path = joint_params(mode)
-    saver.save(sess,
-               path,
-               global_step,
-               latest_filename,
-               meta_graph_suffix,
-               write_meta_graph,
-               write_state,
-               strip_default_attrs)
+         strip_default_attrs=False):
+	saver = tf.train.Saver()
+	path = joint_params(save_path)
+	saver.save(sess,
+	           path,
+	           global_step,
+	           latest_filename,
+	           meta_graph_suffix,
+	           write_meta_graph,
+	           write_state,
+	           strip_default_attrs)
 
 
-def restore(sess, save_path=save_path, mode=0):
-    saver = tf.train.Saver()
-    path = joint_params(mode)
-    saver.restore(sess, path)
+def restore(sess, save_path=save_path):
+	saver = tf.train.Saver()
+	path = joint_params(save_path)
+	saver.restore(sess, path)
