@@ -1,0 +1,2 @@
+model_checkpoint_path: "/Users/houruixiang/python/TensorFlow/command/save_assets/./save_test/test_model"
+all_model_checkpoint_paths: "/Users/houruixiang/python/TensorFlow/command/save_assets/./save_test/test_model"

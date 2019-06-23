@@ -40,7 +40,7 @@ train = optimizer.minimize(loss)
 # 用于验证
 isTrain = False
 # 用于训练
-#isTrain = True
+# isTrain = True
 train_steps = 100
 checkpoint_steps = 50
 
@@ -48,16 +48,16 @@ saver = tf.train.Saver()  # defaults to saving all variables - in this case w an
 x_data = np.reshape(np.random.rand(10).astype(np.float32), (10, 1))
 
 with tf.Session() as sess:
-    sess.run(tf.initialize_all_variables())
-    if isTrain:
-        for i in range(train_steps):
-            sess.run(train, feed_dict={x: x_data})
-            if (i + 1) % checkpoint_steps == 0:
-               save(sess,mode=1)
-    else:
-        restore(sess,mode=1)
-        print(sess.run(w))
-        print(sess.run(b))
-
-    print(sess.run(w))
-    print(sess.run(b))
+	sess.run(tf.initialize_all_variables())
+	if isTrain:
+		for i in range(train_steps):
+			sess.run(train, feed_dict={x: x_data})
+			if (i + 1) % checkpoint_steps == 0:
+				save(sess, './save_test/test_model')
+	else:
+		restore(sess, './save_test/test_model')
+	# print(sess.run(w))
+	# print(sess.run(b))
+	
+	print(sess.run(w))
+	print(sess.run(b))

@@ -49,11 +49,8 @@ with tf.Session() as sess:
 '''
 
 with tf.Session() as sess:
-	restore(sess,'./my_dnn_final.ckpt')
+	restore(sess, './my_dnn_final.ckpt')
 	X_new_scaled = mnist.test.images
 	Z = dnn.logits.eval(feed_dict={dnn.X: X_new_scaled})
 	y_pred = np.argmax(Z, axis=1)
 	print(y_pred)
-
-
-

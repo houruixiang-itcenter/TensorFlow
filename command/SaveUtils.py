@@ -10,7 +10,6 @@ import tensorflow as tf
 
 
 def joint_params(path='theta.ckpt'):
-	
 	return save_path + path
 	
 	pass
@@ -23,8 +22,10 @@ def save(sess,
          meta_graph_suffix="meta",
          write_meta_graph=True,
          write_state=True,
-         strip_default_attrs=False):
-	saver = tf.train.Saver()
+         strip_default_attrs=False,
+         saver=None):
+	if saver is None:
+		saver = tf.train.Saver()
 	path = joint_params(save_path)
 	saver.save(sess,
 	           path,
@@ -36,7 +37,8 @@ def save(sess,
 	           strip_default_attrs)
 
 
-def restore(sess, save_path=save_path):
-	saver = tf.train.Saver()
+def restore(sess, save_path=save_path, saver=None):
+	if saver is None:
+		saver = tf.train.Saver()
 	path = joint_params(save_path)
 	saver.restore(sess, path)
