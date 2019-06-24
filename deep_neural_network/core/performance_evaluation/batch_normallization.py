@@ -43,9 +43,9 @@ X = tf.placeholder(tf.float32, shape=(None, n_inputs), name='X')
 y = tf.placeholder(tf.int64, shape=(None), name='y')
 is_training = tf.placeholder(tf.bool, shape=(), name='is_training')
 bn_params = {
-	'is_training': is_training,
-	'decay': 0.99,
-	'updates_collections': None
+    'is_training': is_training,
+    'decay': 0.99,
+    'updates_collections': None
 }
 
 '''
@@ -75,14 +75,14 @@ batch_norm()只中心化,归一化和对输入进行偏移操作,但是并不缩
 下面看code
 '''
 with arg_scope(
-		[fully_connected],
-		normalizer_fn=batch_norm,
-		normalizer_params=bn_params):
-	hidden1 = fully_connected(X, n_hidden1, scope='hidden1')
-	hidden2 = fully_connected(hidden1, n_hidden2, scope='hidden2')
-	hidden3 = fully_connected(hidden2, n_hidden3, scope='hidden3')
-	hidden4 = fully_connected(hidden3, n_hidden4, scope='hidden4')
-	logits = fully_connected(hidden4, n_outputs, activation_fn=None, scope='outputs')
+        [fully_connected],
+        normalizer_fn=batch_norm,
+        normalizer_params=bn_params):
+    hidden1 = fully_connected(X, n_hidden1, scope='hidden1')
+    hidden2 = fully_connected(hidden1, n_hidden2, scope='hidden2')
+    hidden3 = fully_connected(hidden2, n_hidden3, scope='hidden3')
+    hidden4 = fully_connected(hidden3, n_hidden4, scope='hidden4')
+    logits = fully_connected(hidden4, n_outputs, activation_fn=None, scope='outputs')
 '''
 这种写法在10层以上的神经网络中,可读性会大大提高
 '''
@@ -95,21 +95,33 @@ with arg_scope(
 4.创建Saver
 '''
 with tf.name_scope('loss'):
-	xentropy = tf.nn.sparse_softmax_cross_entropy_with_logits(labels=y, logits=logits)
-	loss = tf.reduce_mean(xentropy, name='loss')
+    xentropy = tf.nn.sparse_softmax_cross_entropy_with_logits(labels=y, logits=logits)
+    loss = tf.reduce_mean(xentropy, name='loss')
 
-learning_rate = 0.01
+'''
+这里进行学习率的指数调度
+'''
+initial_learning_rate = 0.01
+decay_steps = 10000
+decay_rate = 1 / 10
+global_step = tf.Variable(0, trainable=False)
+learning_rate = tf.train.exponential_decay(initial_learning_rate,global_step,decay_steps,decay_rate)
+
 with tf.name_scope('train'):
-	# optimizer = tf.train.GradientDescentOptimizer(learning_rate)
-	optimizer = tf.train.AdamOptimizer(learning_rate)
-	'''
-	minimize:负责计算和应用梯度
-	'''
-	traing_op = optimizer.minimize(loss)
+    # optimizer = tf.train.GradientDescentOptimizer(learning_rate)
+    optimizer = tf.train.MomentumOptimizer(learning_rate,momentum=0.9)
+    '''
+    或者可以使用AdamOptimizer自带学习率下降的学习计划
+    '''
+    # optimizer = tf.train.AdamOptimizer(learning_rate)
+    '''
+    minimize:负责计算和应用梯度
+    '''
+    traing_op = optimizer.minimize(loss)
 
 with tf.name_scope('eval'):
-	correct = tf.nn.in_top_k(logits, y, 1)
-	accuracy = tf.reduce_mean(tf.cast(correct, tf.float32))
+    correct = tf.nn.in_top_k(logits, y, 1)
+    accuracy = tf.reduce_mean(tf.cast(correct, tf.float32))
 
 init = tf.global_variables_initializer()
 saver = tf.train.Saver
@@ -125,19 +137,18 @@ saver = tf.train.Saver
 小批次梯度下降
 定义epoch数量,以及小批次的大小
 '''
-n_epochs = 40
+n_epochs = 100
 batch_size = 500
 
 mnist = get_serialize_data('mnist', 1)
 
 with tf.Session() as sess:
-	sess.run(init)
-	for epoch in range(n_epochs):
-		for iteration in range(mnist.train.num_examples // batch_size):
-			X_batch, y_batch = mnist.train.next_batch(batch_size)
-			sess.run(traing_op, feed_dict={is_training: True, X: X_batch, y: y_batch})
-		accuracy_sorce = accuracy.eval(feed_dict={is_training: False, X: mnist.test.images, y: mnist.test.labels})
-		print(accuracy_sorce)
-	save(sess,'./batch_normallization/final_model')
-
-
+    sess.run(init)
+    for epoch in range(n_epochs):
+        for iteration in range(mnist.train.num_examples // batch_size):
+            X_batch, y_batch = mnist.train.next_batch(batch_size)
+            sess.run(traing_op, feed_dict={is_training: True, X: X_batch, y: y_batch})
+        accuracy_sorce = accuracy.eval(feed_dict={is_training: False, X: mnist.test.images, y: mnist.test.labels})
+        if epoch % 10 == 0:
+            print(accuracy_sorce)
+    save(sess, './batch_normallization/final_model')
