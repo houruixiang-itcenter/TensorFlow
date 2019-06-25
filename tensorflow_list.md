@@ -31,4 +31,17 @@ moudle : tensorflow-master
 moudle : artificial_neural_network 
 -
 > 人工神经网络
+- 单层感知器LTU atificial_neural_network/core/LTU
+- 多层感知器MLP atificial_neural_network/core/MLP -- DNNClassifier
+- 纯tensorflow实现多层感知器的深刻网络
+1. atificial_neural_network/DNN 下所有py file
 
+
+moudle : deep_neural_network 
+-
+- 实现批量归一化(零中心化,归一化  针对input) deep_neural_network/performance_evaluation/batch_normallization
+- 梯度裁剪 deep_neural_network/performance_evaluation/batch_gradient_tailoring
+- 学习效率调度(优化学习效率) deep_neural_network/optimization/learning_rate_optimization
+- l1 & l2 范数正则化 deep_neural_network/optimization/regularization_optimization
+- dropout正则化 deep_neural_network/optimization/dropout_optimization
+- 最大范数正则化 deep_neural_network/optimization/max_regularization_optimization

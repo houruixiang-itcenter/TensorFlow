@@ -36,21 +36,58 @@ is_training = tf.placeholder(tf.bool, shape=(), name='is_training')
 tensorflow没有提供现成的最大范数正则化器,但是实现起来并不难
 下面代码构建一个节点clip_weights,该节点会沿着第二个轴削减weights变量,从而使每一个行向量的最大范数为1
 '''
-# threshold = 1.0
+
+threshold = 1.0
+
+
 # clipped_weights = tf.clip_by_norm(weights, clip_norm=threshold, axes=1)
 # clip_weights = tf.assign(weights, clipped_weights)
 
 
-with arg_scope(
-        [fully_connected],
-        normalizer_fn=batch_norm):
-    hidden1 = fully_connected(X, n_hidden1, scope='hidden1')
-    hidden2 = fully_connected(hidden1, n_hidden2, scope='hidden2')
-    hidden3 = fully_connected(hidden2, n_hidden3, scope='hidden3')
-    hidden4 = fully_connected(hidden3, n_hidden4, scope='hidden4')
-    logits = fully_connected(hidden4, n_outputs, activation_fn=None, scope='outputs')
+def max_norm_regularizer(threshold, weights, axes=1, name='max_norm', collection='max_norm'):
+    def max_norm(weights):
+        clipped = tf.clip_by_norm(weights, clip_norm=threshold, axes=axes)
+        clip_weights = tf.assign(weights, clipped, name=name)
+        tf.add_to_collection(collection, clip_weights)
+        return None  # there is no reg loss item
 
-# with tf
+    return max_norm
+
+
+with arg_scope(
+        [fully_connected]):
+    hidden1_base = fully_connected(X, n_hidden1, scope='hidden1_base')
+    hidden2_base = fully_connected(hidden1_base, n_hidden2, scope='hidden2_base')
+    hidden3_base = fully_connected(hidden2_base, n_hidden3, scope='hidden3_base')
+    hidden4_base = fully_connected(hidden3_base, n_hidden4, scope='hidden4_base')
+    logits_base = fully_connected(hidden4_base, n_outputs, activation_fn=None, scope='outputs_base')
+
+
+for var in tf.global_variables():
+    print(var.name)
+
+with tf.variable_scope("", default_name="", reuse=True):
+    w1 = tf.get_variable("hidden1_base/weights")
+    w2 = tf.get_variable("hidden2_base/weights")
+    w3 = tf.get_variable("hidden3_base/weights")
+    w4 = tf.get_variable("hidden4_base/weights")
+# with tf.variable_scope('hidden1',reuse= True):
+#     w1 = tf.get_variable("weights")
+# with tf.variable_scope('hidden2', reuse=True):
+#     w2 = tf.get_variable("weights")
+# with tf.variable_scope('hidden3', reuse=True):
+#     w3 = tf.get_variable("weights")
+# with tf.variable_scope('hidden4', reuse=True):
+#     w4 = tf.get_variable("weights")
+max_norm_reg1 = max_norm_regularizer(threshold, w1)
+hidden1 = fully_connected(X, n_hidden1, scope='hidden1', weights_regularizer=max_norm_reg1)
+max_norm_reg2 = max_norm_regularizer(threshold, w2)
+hidden2 = fully_connected(hidden1_base, n_hidden2, scope='hidden2', weights_regularizer=max_norm_reg2)
+max_norm_reg3 = max_norm_regularizer(threshold, w3)
+hidden3 = fully_connected(hidden2_base, n_hidden3, scope='hidden3', weights_regularizer=max_norm_reg3)
+max_norm_reg4 = max_norm_regularizer(threshold, w4)
+hidden4 = fully_connected(hidden3_base, n_hidden4, scope='hidden4',weights_regularizer=max_norm_reg4)
+logits = fully_connected(hidden4_base, n_outputs, activation_fn=None, scope='outputs')
 
 with tf.name_scope('loss'):
     xentropy = tf.nn.sparse_softmax_cross_entropy_with_logits(labels=y, logits=logits)
