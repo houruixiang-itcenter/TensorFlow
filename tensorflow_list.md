@@ -45,3 +45,9 @@ moudle : deep_neural_network
 - l1 & l2 范数正则化 deep_neural_network/optimization/regularization_optimization
 - dropout正则化 deep_neural_network/optimization/dropout_optimization
 - 最大范数正则化 deep_neural_network/optimization/max_regularization_optimization
+
+
+
+moudle : convolutional_neural_network 
+-
+卷积神经网络
