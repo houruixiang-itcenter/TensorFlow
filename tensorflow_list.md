@@ -47,6 +47,23 @@ moudle : deep_neural_network
 - 最大范数正则化 deep_neural_network/optimization/max_regularization_optimization
 
 
+MAC OX下安装tensorflow-gpu
+1. 先根据macOS 10.12.6版本，在这个网站http://www.macvidcards.com/drivers.html找到相应的GPU Driver
+我的mac是(16G1314) 378.05.05.25f07 
+
+2.再进入CUDA Driver页面http://www.nvidia.com/object/mac-driver-archive.html，
+找到和GPU driver匹配的版本(cudadriver-8.0.90-macos笔者下的是这个)，然后下载安装。
+我的是这个:cudadriver-8.0.90-macos
+
+3.再进入CUDA Toolkit页面https://developer.nvidia.com/cuda-toolkit-archive，
+下载、安装CUDA Toolkit（笔者安装的是cuda_8.0.61_mac） 
+
+4.CUDNN，笔者这里下的是 cudnn-8.0-osx-x64-v6.0
+ https://developer.nvidia.com/rdp/cudnn-download 
+ 
+5.配置1 & 2 & 3 的环境
+
+
 
 moudle : convolutional_neural_network 
 -
