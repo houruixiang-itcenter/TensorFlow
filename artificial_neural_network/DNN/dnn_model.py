@@ -117,7 +117,7 @@ TensorFlow的fully_connected()函数会创建全连接层,其中左右输入,都
 '''
 		我们已经有了神经网络模型,现在需要定义成本函数用以训练它
 		这里我们回使用softmax中的交叉熵,之前我们讨论过交叉熵回处罚那些估计目标类的概率较低的模型
-		tensorflow提供了很多函数来计算交叉熵,我们这里会用spare_soft_max_cross_entropy_with_logits():
+	tensorflow提供了很多函数来计算交叉熵,我们这里会用spare_soft_max_cross_entropy_with_logits():
 		它会根据'logits'来计算交叉熵(比如通过softmax激活函数之前网络的输出)
 		这会计算出一个包含每个实例的交叉熵的一维张量,可以使用tensorflow的reduce_mean()函数来计算所有实例的交叉熵
 		:param X:

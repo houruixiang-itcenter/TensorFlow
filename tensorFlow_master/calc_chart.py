@@ -12,6 +12,7 @@
 print('-------------------------------------------------创建一个计算图并在会话中执行--------------------------------------')
 import tensorflow as tf
 import os
+import _sqlite3
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 

@@ -68,3 +68,9 @@ MAC OX下安装tensorflow-gpu
 moudle : convolutional_neural_network 
 -
 卷积神经网络
+
+
+method_of_optimizinge-network
+- 
+优化网络的方法 
+ 
