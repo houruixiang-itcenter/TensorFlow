@@ -46,6 +46,8 @@ def select_path(mode):
         path = '/Users/houruixiang/python/TensorFlow/command/assets'
     if mode == 1:
         path = '/Users/houruixiang/python/TensorFlow/command/assets_ann'
+    if mode == 2:
+        path = '/Users/houruixiang/python/TensorFlow/command/assets_mnist'
     return path
 
 

@@ -73,4 +73,11 @@ moudle : convolutional_neural_network
 method_of_optimizinge-network
 - 
 优化网络的方法 
- 
+- method_of_optimizing_network/DNN/Dnn-master.py  DNN全连接神经网络
+- method_of_optimizing_network/dropout/dropout.py  神经网络中使用droupout来降低拟合泛化
+- method_of_optimizing_network/optimizer/GradientDescentOptimizer.py 神经网络中优化器,主要用来优化学习率
+
+
+DNN-MNIST-master
+- 
+- 基于MNIST数据的DNN经典实战
