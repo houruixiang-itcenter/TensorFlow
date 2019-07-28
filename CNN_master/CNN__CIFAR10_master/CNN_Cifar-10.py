@@ -15,7 +15,7 @@ import math
 
 import CNN_master.CNN__CIFAR10_master.Cifar10_data as cifar
 
-max_step = 4000
+max_step = 10000
 bath_size = 100
 '''
 评估数
@@ -53,7 +53,6 @@ y_ = tf.placeholder(tf.int32, [bath_size])
 -------------------------------------------------------------------------------------
 构建第一个:
 卷积层(使用relu做为激活函数) --- 有64个卷积核
-
 接着使用最大池化层
 '''
 kernel1 = variable_with_weight_loss([5, 5, 3, 64], stddev=5e-2, w1=0.0)
@@ -171,8 +170,8 @@ with tf.Session() as sess:
     num_batch = int(math.ceil(num_example_for_eval / bath_size))
     total_num_examples = num_batch * bath_size
     for i in range(num_batch):
-        images_test, labels_test = sess.run([images_test, labels_test])
-        predict = sess.run([top_k_op], feed_dict={x: images_test, y: labels_test})
+        image_test, label_test = sess.run([images_test, labels_test])
+        predict = sess.run([top_k_op], feed_dict={x: image_test, y_: label_test})
         true_count += np.sum(predict)
 
-    print('accuracy = %.3%%' % ((true_count / total_num_examples) * 100))
+    print('accuracy = %.3f%%' % ((true_count / total_num_examples) * 100))
