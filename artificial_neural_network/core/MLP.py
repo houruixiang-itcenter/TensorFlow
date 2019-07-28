@@ -13,7 +13,6 @@ from sklearn.metrics import accuracy_score
 
 import numpy as np
 from tensorflow.contrib.learn.python import learn
-
 from command.DataUtils import get_mnist_train, get_mnist_test, serialize_data, get_serialize_data
 import tensorflow as tf
 

@@ -20,13 +20,12 @@ mnist = get_serialize_data('mnist', 2)  # type: learn.datasets.base.Datasets
 batch_size = 100  # 设置小批量的size
 learning_rate = 0.8  # 设置初始学习率
 learning_rate_decay = 0.999  # 设置学习率的衰减
-max_steps = 200000  # 最大训练步数
+max_steps = 20000  # 最大训练步数
 
 '''
 定义训练轮数的变量 一般定义为不可训练的
 '''
-training_step = tf.Variable(0, trainable=False)
-
+training_step = tf.Variable(0, dtype=tf.float32, trainable=True)
 # todo 第二步 定义网络中的权重参数,偏置参数和前向传播过程
 '''
 1.定义网络层 hidden_layer
@@ -78,6 +77,7 @@ averages_op = averages_class.apply(tf.trainable_variables())
 '''
 再次计算经过前馈网络预测的y值,这里使用了滑动平均,注意这里滑动平均仅仅是一个影子变量
 '''
+a =averages_class.average(w1)
 average_y = hidden_layer(x, averages_class.average(w1), averages_class.average(b1),
                          averages_class.average(w2), averages_class.average(b2), 'average_y')
 
@@ -146,13 +146,23 @@ with tf.Session() as sess:
     '''
     runing...
     '''
-    for i in range(max_steps):
-        if i % 1000 == 0:
-            validate_accuracy = sess.run(accuracy, feed_dict=validate_feed)
-            print('After %d steps,validate_accuracy is %g%%' % (i, validate_accuracy * 100))
-
-            xs, ys = mnist.train.next_batch(batch_size=100)
-            sess.run(train_op, feed_dict={x: xs, y_: ys})
-
-    test_accuracy = sess.run(accuracy, feed_dict=test_feed)
-    print('After %d steps,test_accuracy is %g%%' % (max_steps, test_accuracy * 100))
+    # for i in range(max_steps):
+    #     if i % 1000 == 0:
+    #         validate_accuracy = sess.run(accuracy, feed_dict=validate_feed)
+    #         print('After %d steps,validate_accuracy is %g%%' % (i, validate_accuracy * 100))
+    #
+    for i in range(3):
+        xs, ys = mnist.train.next_batch(batch_size=1)
+        r1 = y.eval(feed_dict={x: xs})
+        r2 = average_y.eval(feed_dict={x: xs})
+        w = w1.eval()[1, :5]
+        b = b1.eval()[:5]
+        print(w)
+        print(b)
+        print(a.eval()[1,:5])
+        print(r1)
+        print(r2)
+        xs, ys = mnist.train.next_batch(batch_size=100)
+        sess.run(train_op, feed_dict={x: xs, y_: ys})
+    # test_accuracy = sess.run(accuracy, feed_dict=test_feed)
+    # print('After %d steps,test_accuracy is %g%%' % (max_steps, test_accuracy * 100))
