@@ -90,7 +90,8 @@ def hidden_layer(input_tensor, regularizer, avg_class, resuse):
         if avg_class == None:
             full_5 = tf.nn.relu(tf.matmul(reshaped, layer5_full_w) + layer5_full_b)
         else:
-            full_5 = tf.nn.relu(tf.matmul(reshaped, avg_class.average(layer5_full_w)) + avg_class.average(layer5_full_b))
+            full_5 = tf.nn.relu(
+                tf.matmul(reshaped, avg_class.average(layer5_full_w)) + avg_class.average(layer5_full_b))
 
     '''
     创建第二个 全连接层
@@ -106,17 +107,17 @@ def hidden_layer(input_tensor, regularizer, avg_class, resuse):
         是否使用滑动平均值
         '''
         if avg_class == None:
-            full_6 = tf.nn.relu(tf.matmul(full_5, layer6_full_w) + layer6_full_b)
+            result = tf.matmul(full_5, layer6_full_w) + layer6_full_b
         else:
-            full_6 = tf.nn.relu(tf.matmul(full_5, avg_class.average(layer6_full_w)) + avg_class.average(layer6_full_b))
-        return full_6
+            result = tf.matmul(full_5, avg_class.average(layer6_full_w)) + avg_class.average(layer6_full_b)
+        return result
 
 
 '''
 定义 x,y  以及反向传播的相关参数
 '''
-x = tf.placeholder(tf.float32, shape=[batch_size, 28, 28, 1])
-y_ = tf.placeholder(tf.float32, shape=[batch_size, 10])
+x = tf.placeholder(tf.float32, shape=[batch_size, 28, 28, 1], name='x_input')
+y_ = tf.placeholder(tf.float32, shape=[batch_size, 10], name='y-output')
 '''
 初始化正则函数
 '''
@@ -138,15 +139,17 @@ average_y = hidden_layer(x, regularizer, variable_averages, resuse=True)
 '''
 定义loss函数
 '''
-cross_entropy = tf.nn.sparse_softmax_cross_entropy_with_logits(logits=y, labels=tf.argmax(y, 1))
+cross_entropy = tf.nn.sparse_softmax_cross_entropy_with_logits(logits=y, labels=tf.argmax(y_, 1))
 cross_entropy_mean = tf.reduce_mean(cross_entropy)
 loss = cross_entropy_mean + tf.add_n(tf.get_collection('loss'))
+
 '''
 定义学习率  --- 指数衰减
 '''
 learning_rate = tf.train.exponential_decay(learning_rate, training_step,
                                            mnist.train.num_examples / batch_size, learning_rate_decay,
                                            staircase=True)
+training_step = tf.train.GradientDescentOptimizer(learning_rate).minimize(loss,global_step=training_step)
 with tf.control_dependencies([training_step, variable_averages_op]):
     train_op = tf.no_op(name='train')
 
