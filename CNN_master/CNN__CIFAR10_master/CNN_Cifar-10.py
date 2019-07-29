@@ -15,7 +15,7 @@ import math
 
 import CNN_master.CNN__CIFAR10_master.Cifar10_data as cifar
 
-max_step = 10000
+max_step = 4000
 bath_size = 100
 '''
 评估数
@@ -147,6 +147,11 @@ with tf.Session() as sess:
     '''
     开启多线程
     '''
+
+    '''
+    将下面一行注释掉再运行，发现程序不动了，这时处于一个挂起状态，start_queue_runners的作用是启动线程，向队列里面写数据。
+    tf.train.start_queue_runners 这个函数将会启动输入管道的线程，填充样本到队列中，以便出队操作可以从队列中拿到样本。
+    '''
     tf.train.start_queue_runners()
 
     for step in range(max_step):
@@ -175,3 +180,5 @@ with tf.Session() as sess:
         true_count += np.sum(predict)
 
     print('accuracy = %.3f%%' % ((true_count / total_num_examples) * 100))
+
+

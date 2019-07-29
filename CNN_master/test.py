@@ -47,12 +47,9 @@ def getUrls(url):
 
 
 # urls = getUrls("https://blog.csdn.net/soullines")
-urls = ['https://blog.csdn.net/soullines/article/details/96317037',
-        'https://blog.csdn.net/soullines/article/details/94399187',
-        'https://blog.csdn.net/soullines/article/details/92833050',
-        'https://blog.csdn.net/soullines/article/details/90923780']
+urls = ['https://blog.csdn.net/soullines/article/details/94399187']
 while True:
     for url in urls:
         requests.request("GET", url, data=payload, headers=headers)
         print(url, "Ok")
-        time.sleep(60)
+        time.sleep(30)

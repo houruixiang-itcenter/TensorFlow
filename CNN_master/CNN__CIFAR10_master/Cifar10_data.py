@@ -104,7 +104,10 @@ inputs()函数调用了read_cifar10()函数,可以选择是否对读入的数据
 
 def input(data_dir, batch_size, distorted):
     # 使用os的join()函数进行拼接
-    filenames = [os.path.join(data_dir, 'data_batch_%d.bin' % i) for i in range(1, 6)]
+    if distorted != None:
+        filenames = [os.path.join(data_dir, 'data_batch_%d.bin' % i) for i in range(1, 6)]
+    else:
+        filenames = [os.path.join(data_dir, 'test_batch.bin')]
     # 创建一个文件队列,并调用read_cifar10()函数读取队列中的文件
     '''
     将文件names传入文件队列创建函数
